@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetMenuItemByIdQuery } from '../Apis/menuItemApi';
+import { useUpdateShoppingCartMutation } from '../Apis/shoppingCartApi';
+import { MainLoader, MiniLoader } from '../Components/Page/Common';
 
 export default function MenuItemDetails() {
 
@@ -9,6 +11,23 @@ export default function MenuItemDetails() {
     const navigate = useNavigate();
     const [quantity, setQuantity] = useState(1);
 
+    const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+    const [updateShoppingCart] = useUpdateShoppingCartMutation();
+
+    const handleAddToCart = async (menuItemId: number) => {
+      setIsAddingToCart(true);
+
+      const response = await updateShoppingCart({
+        menuItemId:menuItemId,
+        updateQuantityBy:quantity,
+        userId:'8eb30672-fadf-4917-89e7-4f308fb30a72'
+      });
+
+      console.log(response);
+
+      setIsAddingToCart(false);
+    };
+
     const handleQuantity = (counter: number) => {
         let newquantity = quantity + counter;
         if (newquantity === 0) {
@@ -16,7 +35,7 @@ export default function MenuItemDetails() {
         } else
         setQuantity(quantity + counter);
         return;
-    }
+    };
 
    //console.log(data);
    
@@ -63,9 +82,17 @@ export default function MenuItemDetails() {
         </span>
         <div className="row pt-4">
           <div className="col-5">
-            <button className="btn btn-success form-control">
+            {isAddingToCart ? (
+            <button disabled className='btn btn-success form-control'>
+              <MiniLoader/>
+            </button>
+            ) 
+            : ( 
+            <button className="btn btn-success form-control" onClick={() => handleAddToCart(data.result?.id)}>
               Add to Cart
             </button>
+            )}
+           
           </div>
 
           <div className="col-5 ">
@@ -85,7 +112,7 @@ export default function MenuItemDetails() {
       </div>
     </div>) 
     : 
-    ( <div>Loading...</div>) }
+    ( <MainLoader />) }
 
     
   </div>
