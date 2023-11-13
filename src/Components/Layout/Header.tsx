@@ -1,16 +1,28 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
-import { cartItemModel } from '../../Interfaces';
+import { useDispatch, useSelector } from 'react-redux';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { cartItemModel, userModel } from '../../Interfaces';
 import { RootState } from '../../Redux/store';
+import { emptyUserState, setLoggedInUser } from '../../Redux/userAuthSlice';
 let logo = require("../../Assets/Images/mango.png");
 
 
 export default function Header() {
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
   const shoppingCartFromStore: cartItemModel[] = useSelector(
     (state: RootState) => state.shoppingCartStore.cartItems ?? []
   );
+  const userDataFromStore: userModel = useSelector((state: RootState) => state.userAuthStore)
+
+  const handleLogout = () =>  {
+    localStorage.removeItem("token");
+    dispatch(setLoggedInUser({...emptyUserState}));
+    navigate("/");
+
+  };
 
   return (
     <div>
@@ -31,7 +43,7 @@ export default function Header() {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0 w-100">
               <li className="nav-item">
                 <NavLink className="nav-link" aria-current="page" to="/">
                   Home
@@ -72,6 +84,60 @@ export default function Header() {
                   </li>
                 </ul>
               </li>
+              <div className="d-flex" style={{ marginLeft: "auto" }}>
+
+                {userDataFromStore.id && (
+                <>
+                <li className="nav-item">
+                  <button
+                    className="nav-link active"
+                    style={{
+                      cursor: "pointer",
+                      background: "transparent",
+                      border: 0,
+                    }}
+                  >
+                    Welcome, {userDataFromStore.fullName}
+                  </button>
+                </li>
+                
+                <li className="nav-item">
+                  <button
+                    className="btn btn-success btn-outlined rounded-pill text-white mx-2"
+                    style={{
+                      border: "none",
+                      height: "40px",
+                      width: "100px",
+                    }}
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </li>
+                </>
+                )}
+
+                {!userDataFromStore.id && (<> <li className="nav-item text-white">
+                  <NavLink className="nav-link" to="/register">
+                    Register
+                  </NavLink>
+                </li>
+                <li className="nav-item text-white">
+                  <NavLink
+                    className="btn btn-success btn-outlined rounded-pill text-white mx-2"
+                    style={{
+                      border: "none",
+                      height: "40px",
+                      width: "100px",
+                    }}
+                    to="/login"
+                  >
+                    Login
+                  </NavLink>
+                </li></>)}
+                
+               
+              </div>
             </ul>
           </div>
         </div>
