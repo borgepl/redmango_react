@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import { apiResponse, menuItemModel } from '../../../Interfaces'
-import { Link } from 'react-router-dom';
+import { apiResponse, menuItemModel, userModel } from '../../../Interfaces'
+import { Link, useNavigate } from 'react-router-dom';
 import { useUpdateShoppingCartMutation } from '../../../Apis/shoppingCartApi';
 import MiniLoader from '../Common/MiniLoader';
 import toastNotify from '../../../Helper/toastNotify';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../Redux/store';
 
 interface Props {
     menuItem: menuItemModel;
@@ -11,16 +13,27 @@ interface Props {
 
 function MenuItemCard(props: Props) {
 
+  const navigate = useNavigate();
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
   const [updateShoppingCart] = useUpdateShoppingCartMutation();
 
+  const userDataFromStore: userModel = useSelector((state: RootState) => state.userAuthStore)
+
   const handleAddToCart = async (menuItemId: number) => {
+
+    if (!userDataFromStore.id) {
+      navigate("/login");
+      return;
+    }
+
     setIsAddingToCart(true);
+
 
     const response : apiResponse = await updateShoppingCart({
       menuItemId:menuItemId,
       updateQuantityBy:1,
-      userId:'8eb30672-fadf-4917-89e7-4f308fb30a72'
+      //userId:'8eb30672-fadf-4917-89e7-4f308fb30a72'
+      userId: userDataFromStore.id
     });
 
     console.log(response);

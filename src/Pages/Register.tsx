@@ -48,8 +48,8 @@ function Register() {
             navigate("/login");
             
         } else if (response.error) {
-            console.log(response.error.data?.errorMessages![0]);
-            toastNotify(response.error.data?.errorMessages![0],"error");
+            console.log(response.error.data?.errors![0]);
+            toastNotify(response.error.data?.errors![0],"error");
         };
 
         setLoading(false);

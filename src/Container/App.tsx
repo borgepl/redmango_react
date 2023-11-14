@@ -4,7 +4,7 @@ import Home from '../Pages/Home';
 import { Route, Routes } from 'react-router-dom';
 import NotFound from '../Pages/NotFound';
 import MenuItemDetails from '../Pages/MenuItemDetails';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useGetShoppingCartQuery } from '../Apis/shoppingCartApi';
 import { setShoppingCart } from '../Redux/shoppingCartSlice';
 import ShoppingCart from '../Pages/ShoppingCart';
@@ -13,13 +13,16 @@ import Register from '../Pages/Register';
 import jwtDecode from 'jwt-decode';
 import userFromTokenModel from '../Interfaces/userFromTokenModel';
 import { setLoggedInUser } from '../Redux/userAuthSlice';
+import { userModel } from '../Interfaces';
+import { RootState } from '../Redux/store';
 
 
 function App() {
 
   const dispatch = useDispatch();
+  const userDataFromStore: userModel = useSelector((state: RootState) => state.userAuthStore)
 
-  const { data, isLoading } = useGetShoppingCartQuery("8eb30672-fadf-4917-89e7-4f308fb30a72");
+  const { data, isLoading } = useGetShoppingCartQuery(userDataFromStore.id);
 
   useEffect(() => {
     
