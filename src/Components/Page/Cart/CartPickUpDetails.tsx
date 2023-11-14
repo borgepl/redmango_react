@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { cartItemModel } from "../../../Interfaces";
+import { cartItemModel, userModel } from "../../../Interfaces";
 import { RootState } from "../../../Redux/store";
 import inputHelper from "../../../Helper/InputHelper";
 import { MiniLoader } from "../Common";
@@ -8,6 +8,7 @@ import { MiniLoader } from "../Common";
 export default function CartPickUpDetails() {
 
 const [loading, setLoading] = useState(false);
+const userDataFromStore: userModel = useSelector((state: RootState) => state.userAuthStore)
 
   const shoppingCartFromStore: cartItemModel[] = useSelector(
     (state: RootState) => state.shoppingCartStore.cartItems ?? []
@@ -16,9 +17,9 @@ const [loading, setLoading] = useState(false);
   let totalItems = 0;
 
   const initialUserData = {
-    name: "",
-    email: "",
-    phoneNumber: "",
+    name: userDataFromStore.fullName,
+    email: userDataFromStore.email,
+    phoneNumber: userDataFromStore.phone,
   };
 
   shoppingCartFromStore?.map((cartItem: cartItemModel) => {
