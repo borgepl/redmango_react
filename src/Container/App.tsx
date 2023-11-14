@@ -15,6 +15,8 @@ import userFromTokenModel from '../Interfaces/userFromTokenModel';
 import { setLoggedInUser } from '../Redux/userAuthSlice';
 import { userModel } from '../Interfaces';
 import { RootState } from '../Redux/store';
+import Payment from '../Pages/Payment';
+import AccessDenied from '../Pages/AccessDenied';
 
 
 function App() {
@@ -52,6 +54,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path='/menuItemDetails/:menuItemId' element={<MenuItemDetails/>}></Route>
           <Route path="/shoppingCart" element={<ShoppingCart />}></Route>
+          <Route path="/payment" element={<Payment />}></Route>
+          <Route path="/accessDenied" element={<AccessDenied />}></Route>
           <Route path='*' element={<NotFound/>}></Route>
         </Routes>
      </div>
