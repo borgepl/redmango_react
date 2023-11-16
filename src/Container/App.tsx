@@ -17,6 +17,7 @@ import { userModel } from '../Interfaces';
 import { RootState } from '../Redux/store';
 import Payment from '../Pages/Payment';
 import AccessDenied from '../Pages/AccessDenied';
+import OrderConfirmed from '../Pages/Order/OrderConfirmed';
 
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
           <Route path="/shoppingCart" element={<ShoppingCart />}></Route>
           <Route path="/payment" element={<Payment />}></Route>
           <Route path="/accessDenied" element={<AccessDenied />}></Route>
+          <Route path="order/orderconfirmed/:id" element={<OrderConfirmed />}></Route>
           <Route path='*' element={<NotFound/>}></Route>
         </Routes>
      </div>
