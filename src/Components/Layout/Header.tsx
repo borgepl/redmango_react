@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { cartItemModel, userModel } from '../../Interfaces';
 import { RootState } from '../../Redux/store';
 import { emptyUserState, setLoggedInUser } from '../../Redux/userAuthSlice';
+import { SD_Roles } from '../../Utility/SD';
 let logo = require("../../Assets/Images/mango.png");
 
 
@@ -49,25 +50,8 @@ export default function Header() {
                   Home
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" aria-current="page" to="/shoppingCart">
-                  <i className='bi bi-cart'></i>
-                  {userDataFromStore.id && `${shoppingCartFromStore.length}`}
-                  
-                </NavLink>
-              </li>
-
-              <li className="nav-item">
-                <NavLink
-                  className="nav-link"
-                  aria-current="page"
-                  to="/order/myorders"
-                >
-                  Orders
-                </NavLink>
-              </li>
-              
-              <li className="nav-item dropdown">
+             
+              {userDataFromStore.role == SD_Roles.ADMIN ? ( <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
                   href="/"
@@ -78,23 +62,32 @@ export default function Header() {
                   Admin Panel
                 </a>
                 <ul className="dropdown-menu">
-                  <li>
-                    <a className="dropdown-item" href="/">
-                      Action
-                    </a>
+                  <li className="dropdown-item" onClick={() => navigate("/order/myorders")}>
+                      My Orders
                   </li>
-                  <li>
-                    <a className="dropdown-item" href="/">
-                      Another action
-                    </a>
+                  <li className="dropdown-item" onClick={() => navigate("/order/allorders")}>
+                      All Orders
                   </li>
-                  <li>
-                    <a className="dropdown-item" href="/">
-                      Something else here
-                    </a>
-                  </li>
+                  
                 </ul>
+              </li>) : ( <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  aria-current="page"
+                  to="/order/myorders"
+                >
+                  Orders
+                </NavLink>
+              </li>)}
+             
+              <li className="nav-item">
+                <NavLink className="nav-link" aria-current="page" to="/shoppingCart">
+                  <i className='bi bi-cart'></i>
+                  {userDataFromStore.id && `${shoppingCartFromStore.length}`}
+                  
+                </NavLink>
               </li>
+
               <div className="d-flex" style={{ marginLeft: "auto" }}>
 
                 {userDataFromStore.id && (
