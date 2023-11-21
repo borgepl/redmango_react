@@ -18,6 +18,8 @@ import { RootState } from '../Redux/store';
 import Payment from '../Pages/Payment';
 import AccessDenied from '../Pages/AccessDenied';
 import OrderConfirmed from '../Pages/Order/OrderConfirmed';
+import MyOrders from '../Pages/Order/MyOrders';
+import OrderDetails from '../Pages/Order/OrderDetails';
 
 
 function App() {
@@ -58,6 +60,8 @@ function App() {
           <Route path="/payment" element={<Payment />}></Route>
           <Route path="/accessDenied" element={<AccessDenied />}></Route>
           <Route path="order/orderconfirmed/:id" element={<OrderConfirmed />}></Route>
+          <Route path="/order/myOrders" element={<MyOrders />} />
+          <Route path="/order/OrderDetails/:id" element={<OrderDetails />} />
           <Route path='*' element={<NotFound/>}></Route>
         </Routes>
      </div>
