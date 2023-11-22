@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { orderSummaryProps } from "./orderSummaryProps";
 import { cartItemModel } from "../../../Interfaces";
 import getStatusColor from "../../../Helper/getStatusColor";
@@ -6,12 +6,19 @@ import { useNavigate } from "react-router-dom";
 import { SD_Roles, SD_Status } from "../../../Utility/SD";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../Redux/store";
+import { useUpdateOrderHeaderMutation } from "../../../Apis/orderApi";
+import { MainLoader } from "../Common";
 
 function OrderSummary({data,userInput}: orderSummaryProps) {
 
   const navigate = useNavigate();
+
+  const [loading, setIsLoading] = useState(false);
+  const [updateOrderHeader] = useUpdateOrderHeaderMutation();
+
   const userDataFromStore = useSelector((state: RootState) => state.userAuthStore);
   const badgeTypeColor = getStatusColor(data.status);
+  
   const nextStatus: any =
     data.status! === SD_Status.CONFIRMED
       ? { color: "info", value: SD_Status.BEING_COOKED }
@@ -22,10 +29,31 @@ function OrderSummary({data,userInput}: orderSummaryProps) {
           value: SD_Status.COMPLETED,
         };
 
+  const handleNextStatus = async () => {
+    setIsLoading(true);
+    await updateOrderHeader({
+            orderHeaderId: data.id,
+            status: nextStatus.value,
+          });
+      
+    setIsLoading(false);
+  };
+      
+  const handleCancel = async () => {
+    setIsLoading(true);
+    await updateOrderHeader({
+            orderHeaderId: data.id,
+            status: SD_Status.CANCELLED,
+          });
+    setIsLoading(false);
+  };
+  
   return (
     <div>
-      {" "}
-      <div className="d-flex justify-content-between align-items-center">
+      {loading && <MainLoader/>}
+      {!loading && (
+      <>
+        <div className="d-flex justify-content-between align-items-center">
         <h3 className="text-success">Order Summary</h3>
         <span className={`btn btn-outline-${badgeTypeColor} fs-6`}>
           {data.status}
@@ -66,13 +94,23 @@ function OrderSummary({data,userInput}: orderSummaryProps) {
         </button>
         {userDataFromStore.role == SD_Roles.ADMIN && (
           <div className="d-flex">
-            <button className="btn btn-danger mx-2">Cancel</button>
-            <button className={`btn btn-${nextStatus.color}`}>
+            {data.status! !== SD_Status.CANCELLED && data.status! !== SD_Status.COMPLETED && (
+                    <button
+                      className="btn btn-danger mx-2"
+                      onClick={handleCancel}
+                    >
+                      Cancel
+                    </button>
+            )}
+            <button className={`btn btn-${nextStatus.color}`} onClick={handleNextStatus}>
               {nextStatus.value}
             </button>
           </div>
         )}
       </div>
+      </>
+      )}
+      
     </div>
   );
 }
