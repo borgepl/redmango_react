@@ -20,6 +20,9 @@ import AccessDenied from '../Pages/AccessDenied';
 import OrderConfirmed from '../Pages/Order/OrderConfirmed';
 import MyOrders from '../Pages/Order/MyOrders';
 import OrderDetails from '../Pages/Order/OrderDetails';
+import AllOrders from '../Components/Page/Order/AllOrders';
+import MenuItemList from '../Pages/MenuItem/MenuItemList';
+import MenuItemUpsert from '../Pages/MenuItem/MenuItemUpsert';
 
 
 function App() {
@@ -61,7 +64,11 @@ function App() {
           <Route path="/accessDenied" element={<AccessDenied />}></Route>
           <Route path="order/orderconfirmed/:id" element={<OrderConfirmed />}></Route>
           <Route path="/order/myOrders" element={<MyOrders />} />
+          <Route path="/order/allOrders" element={<AllOrders />} />
           <Route path="/order/OrderDetails/:id" element={<OrderDetails />} />
+          <Route path="/menuitem/menuitemlist" element={<MenuItemList />} />
+          <Route path="/menuItem/menuItemUpsert/:id" element={<MenuItemUpsert />} />
+          <Route path="/menuItem/menuItemUpsert" element={<MenuItemUpsert />} />
           <Route path='*' element={<NotFound/>}></Route>
         </Routes>
      </div>

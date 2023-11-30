@@ -68,7 +68,9 @@ export default function Header() {
                   <li className="dropdown-item" onClick={() => navigate("/order/allorders")}>
                       All Orders
                   </li>
-                  
+                  <li className="dropdown-item" onClick={() => navigate("/menuitem/menuitemlist")}>
+                      Manage Menu Items
+                  </li>
                 </ul>
               </li>) : ( <li className="nav-item">
                 <NavLink
