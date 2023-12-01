@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import inputHelper from "../../Helper/InputHelper";
 import toastNotify from "../../Helper/toastNotify";
+import { useCreateMenuItemMutation } from "../../Apis/menuItemApi";
+import { useNavigate } from "react-router-dom";
 
 
 const menuItemData = {
@@ -13,9 +15,13 @@ const menuItemData = {
 
 function MenuItemUpsert() {
     
+  const navigate = useNavigate();
+
     const [imageToBeStore, setImageToBeStore] = useState<any>();
     const [imageToBeDisplay, setImageToBeDisplay] = useState<string>("");
     const [menuItemInputs, setMenuItemInputs] = useState(menuItemData);
+    const [loading, setLoading] = useState(false);
+    const [createMenuItem] = useCreateMenuItemMutation();
 
     const handleMenuItemInput = (
       e: React.ChangeEvent<
@@ -55,12 +61,39 @@ function MenuItemUpsert() {
           };
         }
       };
+
+      const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+        if (!imageToBeStore) {
+          toastNotify("Please upload an image", "error");
+          setLoading(false);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("Name", menuItemInputs.name);
+        formData.append("Description", menuItemInputs.description);
+        formData.append("SpecialTag", menuItemInputs.specialTag);
+        formData.append("Category", menuItemInputs.category);
+        formData.append("Price", menuItemInputs.price);
+        formData.append("File", imageToBeStore);
+
+        const response = await createMenuItem(formData);
+        console.log(response);
+        if (response) {
+          setLoading(false);
+          navigate("/menuitem/menuitemlist");
+        }
+
+        setLoading(false);
+      };
     
 
   return (
     <div className="container border mt-5 p-5">
       <h3 className="offset-2 px-2 text-success">Add Product</h3>
-      <form method="post" encType="multipart/form-data">
+      <form method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
         <div className="row mt-3">
           <div className="col-md-5 offset-2">
             <input
