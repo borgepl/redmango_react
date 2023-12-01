@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import inputHelper from "../../Helper/InputHelper";
 import toastNotify from "../../Helper/toastNotify";
+import { useCreateMenuItemMutation, useGetMenuItemByIdQuery, useUpdateMenuItemMutation } from "../../Apis/menuItemApi";
+import { useNavigate, useParams } from "react-router-dom";
+import { MainLoader } from "../../Components/Page/Common";
 
 
 const menuItemData = {
@@ -13,9 +16,31 @@ const menuItemData = {
 
 function MenuItemUpsert() {
     
+  const navigate = useNavigate();
+  const { id } = useParams();
+
     const [imageToBeStore, setImageToBeStore] = useState<any>();
     const [imageToBeDisplay, setImageToBeDisplay] = useState<string>("");
     const [menuItemInputs, setMenuItemInputs] = useState(menuItemData);
+    const [loading, setLoading] = useState(false);
+    const [createMenuItem] = useCreateMenuItemMutation();
+    const [updateMenuItem] = useUpdateMenuItemMutation();
+
+    const { data } = useGetMenuItemByIdQuery(id);
+
+    useEffect(() => {
+      if (data && data.result) {
+        const tempData = {
+          name: data.result.name,
+          description: data.result.description,
+          specialTag: data.result.specialTag,
+          category: data.result.category,
+          price: data.result.price,
+        };
+        setMenuItemInputs(tempData);
+        setImageToBeDisplay(data.result.image);
+      }
+    },[data]);
 
     const handleMenuItemInput = (
       e: React.ChangeEvent<
@@ -55,14 +80,57 @@ function MenuItemUpsert() {
           };
         }
       };
+
+      const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+        if (!imageToBeStore && !id) {
+          toastNotify("Please upload an image", "error");
+          setLoading(false);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("Name", menuItemInputs.name);
+        formData.append("Description", menuItemInputs.description);
+        formData.append("SpecialTag", menuItemInputs.specialTag);
+        formData.append("Category", menuItemInputs.category);
+        formData.append("Price", menuItemInputs.price);
+        if (imageToBeDisplay) formData.append("File", imageToBeStore);
+
+        let response;
+        if (id) {
+          //update
+          formData.append("Id", id);
+          response = await updateMenuItem({data: formData, id});
+          toastNotify("Menu Item updated successfully","success");
+        }
+        else {
+          // create
+          response = await createMenuItem(formData);
+          toastNotify("Menu Item created successfully","success");
+        };
+
+        
+        console.log(response);
+        if (response) {
+          setLoading(false);
+          navigate("/menuitem/menuitemlist");
+        }
+
+        setLoading(false);
+      };
     
 
   return (
-    <div className="container border mt-5 p-5">
-      <h3 className="offset-2 px-2 text-success">Add Product</h3>
-      <form method="post" encType="multipart/form-data">
-        <div className="row mt-3">
-          <div className="col-md-5 offset-2">
+    <div className="container border mx-3 p-5 bg-light">
+      {loading && <MainLoader/>}
+      <h3 className="px-2 text-success">
+        {id ? "Update Menu Item": "Add Menu Item"}
+      </h3>
+      <form method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
+        <div className="row">
+          <div className="col-md-7">
             <input
               type="text"
               className="form-control"
@@ -110,15 +178,22 @@ function MenuItemUpsert() {
               onChange={handleFileChange}
               className="form-control mt-3"
             />
-            <div className="text-center">
-              <button
-                type="submit"
-                style={{ width: "50%" }}
-                className="btn btn-success mt-5"
-              >
-                Submit
-              </button>
+            <div className="row">
+              <div className="col-6">
+                <button
+                  type="submit"
+                  className="btn btn-success form-control mt-4"
+                >
+                {id ? "Update" : "Create"}
+                </button>
+              </div>
+              <div className="col-6">
+                <button className="btn btn-secondary form-control mt-4"
+                onClick={() => navigate(-1)}
+                >Back To List</button>
+              </div>
             </div>
+            
           </div>
           <div className="col-md-5 text-center">
             <img
