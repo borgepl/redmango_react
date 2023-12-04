@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import inputHelper from "../../Helper/InputHelper";
 import toastNotify from "../../Helper/toastNotify";
+<<<<<<< HEAD
 import { useCreateMenuItemMutation, useGetMenuItemByIdQuery, useUpdateMenuItemMutation } from "../../Apis/menuItemApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { MainLoader } from "../../Components/Page/Common";
+=======
+import { useCreateMenuItemMutation } from "../../Apis/menuItemApi";
+import { useNavigate } from "react-router-dom";
+>>>>>>> 6409f55c44802450d7dc628dae86584e88ce3342
 
 
 const menuItemData = {
@@ -17,13 +22,17 @@ const menuItemData = {
 function MenuItemUpsert() {
     
   const navigate = useNavigate();
+<<<<<<< HEAD
   const { id } = useParams();
+=======
+>>>>>>> 6409f55c44802450d7dc628dae86584e88ce3342
 
     const [imageToBeStore, setImageToBeStore] = useState<any>();
     const [imageToBeDisplay, setImageToBeDisplay] = useState<string>("");
     const [menuItemInputs, setMenuItemInputs] = useState(menuItemData);
     const [loading, setLoading] = useState(false);
     const [createMenuItem] = useCreateMenuItemMutation();
+<<<<<<< HEAD
     const [updateMenuItem] = useUpdateMenuItemMutation();
 
     const { data } = useGetMenuItemByIdQuery(id);
@@ -41,6 +50,8 @@ function MenuItemUpsert() {
         setImageToBeDisplay(data.result.image);
       }
     },[data]);
+=======
+>>>>>>> 6409f55c44802450d7dc628dae86584e88ce3342
 
     const handleMenuItemInput = (
       e: React.ChangeEvent<
@@ -84,7 +95,11 @@ function MenuItemUpsert() {
       const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
+<<<<<<< HEAD
         if (!imageToBeStore && !id) {
+=======
+        if (!imageToBeStore) {
+>>>>>>> 6409f55c44802450d7dc628dae86584e88ce3342
           toastNotify("Please upload an image", "error");
           setLoading(false);
           return;
@@ -96,6 +111,7 @@ function MenuItemUpsert() {
         formData.append("SpecialTag", menuItemInputs.specialTag);
         formData.append("Category", menuItemInputs.category);
         formData.append("Price", menuItemInputs.price);
+<<<<<<< HEAD
         if (imageToBeDisplay) formData.append("File", imageToBeStore);
 
         let response;
@@ -112,6 +128,11 @@ function MenuItemUpsert() {
         };
 
         
+=======
+        formData.append("File", imageToBeStore);
+
+        const response = await createMenuItem(formData);
+>>>>>>> 6409f55c44802450d7dc628dae86584e88ce3342
         console.log(response);
         if (response) {
           setLoading(false);
@@ -123,6 +144,7 @@ function MenuItemUpsert() {
     
 
   return (
+<<<<<<< HEAD
     <div className="container border mx-3 p-5 bg-light">
       {loading && <MainLoader/>}
       <h3 className="px-2 text-success">
@@ -131,6 +153,13 @@ function MenuItemUpsert() {
       <form method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-md-7">
+=======
+    <div className="container border mt-5 p-5">
+      <h3 className="offset-2 px-2 text-success">Add Product</h3>
+      <form method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
+        <div className="row mt-3">
+          <div className="col-md-5 offset-2">
+>>>>>>> 6409f55c44802450d7dc628dae86584e88ce3342
             <input
               type="text"
               className="form-control"
