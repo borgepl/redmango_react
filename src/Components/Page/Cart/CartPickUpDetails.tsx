@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { apiResponse, cartItemModel, userModel } from "../../../Interfaces";
 import { RootState } from "../../../Redux/store";
@@ -37,6 +37,14 @@ const userDataFromStore: userModel = useSelector((state: RootState) => state.use
     const tempData = inputHelper(e, userInput);
     setUserInput(tempData);
   };
+
+  useEffect(() => {
+    setUserInput({
+      name: userDataFromStore.fullName,
+      email: userDataFromStore.email,
+      phoneNumber: userDataFromStore.phone
+    });
+  }, [userDataFromStore]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
