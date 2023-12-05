@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Footer, Header } from '../Components/Layout';
 import Home from '../Pages/Home';
 import { Route, Routes } from 'react-router-dom';
@@ -29,8 +29,8 @@ function App() {
 
   const dispatch = useDispatch();
   const userDataFromStore: userModel = useSelector((state: RootState) => state.userAuthStore)
-
-  const { data, isLoading } = useGetShoppingCartQuery(userDataFromStore.id);
+  const [skipValue, setSkipValue] = useState(true);
+  const { data, isLoading } = useGetShoppingCartQuery(userDataFromStore.id, {skip:skipValue});
 
   useEffect(() => {
     
@@ -43,11 +43,15 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && data) {
       console.log(data.result);
       dispatch(setShoppingCart(data.result?.cartItems));
     }
   }, [data]);
+
+  useEffect(() => {
+    if (userDataFromStore.id) setSkipValue(false);
+  }, [userDataFromStore]);
 
 
   return (
